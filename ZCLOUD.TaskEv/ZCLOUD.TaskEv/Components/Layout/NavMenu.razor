@@ -1,0 +1,73 @@
+﻿@inject IUserService UserService
+@inject NavigationManager NavigationManager
+
+<div class="navbar navbar-expand-sm navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Evidence úkolů</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav me-auto">
+                
+            </ul>
+
+            <div class="user-selector d-flex align-items-center">
+                <label class="form-label mb-0 me-2">Aktivní uživatel:</label>
+                <select class="form-select" style="width: auto;" @bind="selectedUser">
+                    @foreach (var user in UserService.GetAllUsers())
+                    {
+                        <option value="@user">@user</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    protected override void OnInitialized()
+    {
+        UserService.OnChange += HandleUserServiceChange;
+    }
+
+    private void HandleUserServiceChange()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        UserService.OnChange -= HandleUserServiceChange;
+    }
+
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    private string selectedUser
+    {
+        get => UserService.CurrentUser;
+        set
+        {
+            UserService.CurrentUser = value;
+        }
+    }
+}
+
+<style>
+    .user-selector {
+        border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .nav-scrollable {
+        display: flex;
+        flex-direction: column;
+    }
+</style>

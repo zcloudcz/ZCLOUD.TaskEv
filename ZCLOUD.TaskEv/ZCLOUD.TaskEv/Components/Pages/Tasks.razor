@@ -1,0 +1,48 @@
+﻿@page "/"
+@inject IDbContextFactory<ApplicationDbContext> ContextFactory
+@inject NavigationManager NavigationManager
+@inject IUserService UserService
+
+<h1>Seznam úkolů</h1>
+
+<div class="filters mb-4">
+    <div class="btn-group">
+        <button class="btn @(currentView == TasksView.All  ? "btn-primary" : "btn-outline-primary")"
+                @onclick="@(() => ChangeView(TasksView.All))">
+            Všechny úkoly
+        </button>
+        <button class="btn @(currentView == TasksView.Unresolved ? "btn-primary" : "btn-outline-primary")"
+                @onclick="@(() => ChangeView(TasksView.Unresolved))">
+            Nevyřešené úkoly
+        </button>
+        <button class="btn @(currentView == TasksView.Overdue ? "btn-primary" : "btn-outline-primary")"
+                @onclick="@(() => ChangeView(TasksView.Overdue))">
+            Po termínu
+        </button>
+        <button class="btn @(currentView == TasksView.Assignee ? "btn-primary" : "btn-outline-primary")"
+                @onclick="@(() => ChangeView(TasksView.Assignee))">
+            Moje úkoly
+        </button>
+        <button class="btn @(currentView == TasksView.Assigner ? "btn-primary" : "btn-outline-primary")"
+                @onclick="@(() => ChangeView(TasksView.Assigner))">
+            Mnou zadané úkoly
+        </button>
+        <button class="btn @(currentView == TasksView.ChecklistOverdue ? "btn-primary" : "btn-outline-primary")"
+                @onclick="@(() => ChangeView(TasksView.ChecklistOverdue))">
+            Zpožděné checklisty
+        </button>
+        <button class="btn btn-success" @onclick="CreateNewTask">
+            <i class="fas fa-plus"></i> Nový úkol
+        </button>
+    </div>
+
+</div>
+
+<TaskTable Tasks="filteredTasks" ShowChecklistStatus="ShowChecklists" OnTaskSelected="OpenTaskDetail"></TaskTable>
+
+
+
+@if (selectedTaskId.HasValue)
+{
+    <TaskDetail TaskId="@selectedTaskId.Value" OnCloseTask="CloseTaskDetail" OnSaveNew="LoadTasksAsync" />
+}

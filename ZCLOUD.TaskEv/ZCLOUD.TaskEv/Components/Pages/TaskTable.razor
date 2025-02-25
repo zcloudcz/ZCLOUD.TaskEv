@@ -1,0 +1,53 @@
+﻿@using ZCLOUD.TaskEv.Data.Enums
+@using ZCLOUD.TaskEv.Data.Models
+@inject NavigationManager NavigationManager
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Firma</th>
+                <th>Popis</th>
+                <th>Zadavatel</th>
+                <th>Řešitel</th>
+                <th>Termín</th>
+                <th>Priorita</th>
+                <th>Stav</th>
+                @if (ShowChecklistStatus)
+                {
+                    <th>Checklist položky po termínu</th>
+                }
+                <th>Akce</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var task in Tasks)
+            {
+                <tr class="@GetRowClass(task)">
+                    <td>@task.CompanyName</td>
+                    <td>@task.Description</td>
+                    <td>@task.AssignedBy</td>
+                    <td>@task.AssignedTo</td>
+                    <td>@task.Deadline.ToShortDateString()</td>
+                    <td><span class="badge bg-@task.Priority.GetPriorityColor()">@task.Priority</span></td>
+                    <td><span class="badge bg-@task.Status.GetStatusColor()">@task.Status</span></td>
+                    @if (ShowChecklistStatus)
+                    {
+                        <td>
+                            @if (task.ChecklistItems?.Any(i => !i.IsCompleted && i.Deadline < DateTime.Now) == true)
+                            {
+                                var overdueItems = task.ChecklistItems.Count(i => !i.IsCompleted && i.Deadline < DateTime.Now);
+                                <span class="badge bg-danger">@overdueItems položek po termínu</span>
+                            }
+                        </td>
+                    }
+                    <td>
+                        <button class="btn btn-sm btn-primary" @onclick="() => OnTaskSelected.InvokeAsync(task.Id)">
+                            Detail
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

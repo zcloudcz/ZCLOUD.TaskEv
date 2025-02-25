@@ -1,0 +1,27 @@
+﻿@using Microsoft.EntityFrameworkCore
+@using ZCLOUD.TaskEv.Data
+@using ZCLOUD.TaskEv.Data.Models
+@inject IDbContextFactory<ApplicationDbContext> ContextFactory
+@inject IWebHostEnvironment Environment
+@inject IJSRuntime JSRuntime
+
+<div class="documents-container">
+    <InputFile OnChange="@HandleFileSelected" class="mb-3" />
+
+    <div class="document-list">
+        @foreach (var doc in documents)
+        {
+            <div class="document-item d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
+                <span>@doc.FileName</span>
+                <div>
+                    <button class="btn btn-sm btn-primary me-2" @onclick="() => DownloadDocument(doc)">
+                        Stáhnout
+                    </button>
+                    <button class="btn btn-sm btn-danger" @onclick="() => DeleteDocument(doc)">
+                        Smazat
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+</div>

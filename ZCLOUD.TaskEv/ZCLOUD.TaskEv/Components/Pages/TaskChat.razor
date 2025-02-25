@@ -1,0 +1,23 @@
+﻿@inject IDbContextFactory<ApplicationDbContext> ContextFactory
+@inject IUserService UserService
+
+
+<div class="chat-container">
+    <div class="messages-container mb-3" style="height: 300px; overflow-y: auto;">
+        @foreach (var message in messages.OrderBy(m => m.SendDate))
+        {
+            <div class="message mb-2 p-2 @(IsCurrentUser(message.SenderName) ? "bg-light text-end" : "bg-info bg-opacity-10")">
+                <small class="text-muted">@message.SenderName - @message.SendDate.ToString("g")</small>
+                <div>@message.Message</div>
+            </div>
+        }
+    </div>
+
+    <div class="input-group">
+        <input type="text" class="form-control" @bind="newMessage" @bind:event="oninput"
+               @onkeypress="HandleKeyPress" placeholder="Napište zprávu..." />
+        <button class="btn btn-primary" @onclick="SendMessage" disabled="@string.IsNullOrWhiteSpace(newMessage)">
+            Odeslat
+        </button>
+    </div>
+</div>
